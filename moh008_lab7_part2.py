@@ -35,16 +35,15 @@ if __name__ == '__main__':
 
 		while True:
 			# Receive data from microcontroller 1
-			newLightValue = spi0.xfer([0x10])
+			spi0.xfer([0x10])
+			newLightValue = spi0.readbytes(1)
 			# Calculate running average using Welford's algorithm
 			average[0] = int(WelfordsAlgorithm(newLightValue[0]))
-
 			# Send new average to microcontroller 2
 			spi1.writebytes([0x40])
 			spi1.writebytes(average)
 			# Delay for 1 second
 			time.sleep(0.5)
-
 			# Send Current Light Value to microcontroller 2
 			spi1.writebytes([0x20])
 			spi1.writebytes(newLightValue)
@@ -52,7 +51,6 @@ if __name__ == '__main__':
 			print (average)
 			print ("Cur_value:")
 			print (newLightValue)
-			time.sleep(0.5)
 
 	except KeyboardInterrupt:
 		# Close all open SPI (spi.close())
